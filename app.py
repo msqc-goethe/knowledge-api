@@ -58,5 +58,19 @@ def get_summaries():  # put application's code here
     return json.dumps(result_list)
 
 
+@app.route('/results/', methods=['GET', 'POST'])
+def get_results():  # put application's code here
+    cur = get_db().cursor()
+    summary_id = request.args.get('summary_id')
+    # access = request.args.get('access')
+    # query = cur.execute("SELECT * FROM results WHERE summary_id = ? AND  access = ?", id, access)
+    query = cur.execute("SELECT * FROM results WHERE summary_id = ?", summary_id)
+    colname = [d[0] for d in query.description]
+    result_list = [dict(zip(colname, r)) for r in query.fetchall()]
+    cur.close()
+    cur.connection.close()
+    return json.dumps(result_list)
+
+
 if __name__ == '__main__':
     app.run()
