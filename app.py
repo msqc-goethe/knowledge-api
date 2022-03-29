@@ -57,6 +57,18 @@ def get_summaries():  # put application's code here
     cur.connection.close()
     return json.dumps(result_list)
 
+@app.route('/summaries/multi', methods=['GET', 'POST'])
+def get_multi_summaries():  # put application's code here
+    cur = get_db().cursor()
+    ids = request.args.get('ids')
+    sql = " SELECT * FROM summaries WHERE performance_id in (" + ids +")"
+    query = cur.execute(sql)
+    colname = [d[0] for d in query.description]
+    result_list = [dict(zip(colname, r)) for r in query.fetchall()]
+    cur.close()
+    cur.connection.close()
+    return json.dumps(result_list)
+
 
 @app.route('/results/', methods=['GET', 'POST'])
 def get_results():  # put application's code here
