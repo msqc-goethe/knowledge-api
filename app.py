@@ -46,11 +46,25 @@ def get_performances():  # put application's code here
     return json.dumps(result_list)
 
 
+@app.route('/filesystems/', methods=['GET', 'POST'])
+def get_filesystem():
+    cur = get_db().cursor()
+    performance_id = request.args.get('id')
+    sql = "SELECT * FROM filesystems WHERE performance_id ="+ performance_id
+    query = cur.execute(sql)
+    colname = [d[0] for d in query.description]
+    result_list = [dict(zip(colname, r)) for r in query.fetchall()]
+    cur.close()
+    cur.connection.close()
+    return json.dumps(result_list)
+
+
 @app.route('/summaries/', methods=['GET', 'POST'])
 def get_summaries():  # put application's code here
     cur = get_db().cursor()
     id = request.args.get('id')
-    query = cur.execute("SELECT * FROM summaries WHERE performance_id = ?", id)
+    sql = "SELECT * FROM summaries WHERE performance_id ="+ id
+    query = cur.execute(sql)
     colname = [d[0] for d in query.description]
     result_list = [dict(zip(colname, r)) for r in query.fetchall()]
     cur.close()
@@ -61,7 +75,41 @@ def get_summaries():  # put application's code here
 def get_multi_summaries():  # put application's code here
     cur = get_db().cursor()
     ids = request.args.get('ids')
+    # print(ids)
     sql = " SELECT * FROM summaries WHERE performance_id in (" + ids +")"
+    print(sql)
+    query = cur.execute(sql)
+    colname = [d[0] for d in query.description]
+    result_list = [dict(zip(colname, r)) for r in query.fetchall()]
+    cur.close()
+    cur.connection.close()
+    return json.dumps(result_list)
+
+@app.route('/summaries/multi/reads', methods=['GET', 'POST'])
+def get_multi_summaries_reads():  # put application's code here
+    cur = get_db().cursor()
+    ids = request.args.get('ids')
+    read_or_write = request.args.get('read_or_write')
+    # print(ids)
+    if not read_or_write == "":
+        sql = " SELECT * FROM summaries join results on summaries.id = results.summary_id WHERE performance_id in (" + ids +") AND operation == " +'\'' + read_or_write + '\''
+    else:
+        sql = " SELECT * FROM summaries join results on summaries.id = results.summary_id WHERE performance_id in (" + ids + ")"
+    print(sql)
+    query = cur.execute(sql)
+    colname = [d[0] for d in query.description]
+    result_list = [dict(zip(colname, r)) for r in query.fetchall()]
+    cur.close()
+    cur.connection.close()
+    return json.dumps(result_list)
+
+@app.route('/summaries/multi/writes', methods=['GET', 'POST'])
+def get_multi_summaries_writes():  # put application's code here
+    cur = get_db().cursor()
+    ids = request.args.get('ids')
+    # print(ids)
+    sql = " SELECT * FROM summaries WHERE performance_id in (" + ids +") "
+    print(sql)
     query = cur.execute(sql)
     colname = [d[0] for d in query.description]
     result_list = [dict(zip(colname, r)) for r in query.fetchall()]
@@ -70,13 +118,17 @@ def get_multi_summaries():  # put application's code here
     return json.dumps(result_list)
 
 
+
+
 @app.route('/results/', methods=['GET', 'POST'])
 def get_results():  # put application's code here
     cur = get_db().cursor()
     summary_id = request.args.get('summary_id')
+    #print(summary_id)
     # access = request.args.get('access')
     # query = cur.execute("SELECT * FROM results WHERE summary_id = ? AND  access = ?", id, access)
-    query = cur.execute("SELECT * FROM results WHERE summary_id = ?", summary_id)
+    sql = "SELECT * FROM results WHERE summary_id =" + summary_id
+    query = cur.execute(sql)
     colname = [d[0] for d in query.description]
     result_list = [dict(zip(colname, r)) for r in query.fetchall()]
     cur.close()
