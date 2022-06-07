@@ -6,7 +6,11 @@ from flask import request
 
 app = Flask(__name__)
 
-DATABASE = "../pythonProject1/pythonsqlite.db"
+
+#DATABASE = "../pythonProject1/pythonsqlite.db"
+
+#current Databasepath
+DATABASE = "../IORExtractor/pythonsqlite.db"
 
 
 def get_db():
@@ -24,6 +28,7 @@ def close_connection(exception):
         db.close()
 
 
+#Seems like dummy code which can be copy and pasted
 @app.route('/')
 def hello_world():  # put application's code here
     cur = get_db().cursor()
@@ -34,7 +39,7 @@ def hello_world():  # put application's code here
     cur.connection.close()
     return json.dumps(result_list)
 
-
+#sets the route performances and selects every row from performances
 @app.route('/performances')
 def get_performances():  # put application's code here
     cur = get_db().cursor()
@@ -46,6 +51,8 @@ def get_performances():  # put application's code here
     return json.dumps(result_list)
 
 
+#sets filesystem route
+#selects filesystem where the performance id is equal to the given performance id
 @app.route('/filesystems/', methods=['GET', 'POST'])
 def get_filesystem():
     cur = get_db().cursor()
@@ -58,7 +65,8 @@ def get_filesystem():
     cur.connection.close()
     return json.dumps(result_list)
 
-
+#sets the summaries route
+#selects summaries where the perfromance id is equal to the given performance id
 @app.route('/summaries/', methods=['GET', 'POST'])
 def get_summaries():  # put application's code here
     cur = get_db().cursor()
@@ -71,6 +79,7 @@ def get_summaries():  # put application's code here
     cur.connection.close()
     return json.dumps(result_list)
 
+#add comments here
 @app.route('/summaries/multi', methods=['GET', 'POST'])
 def get_multi_summaries():  # put application's code here
     cur = get_db().cursor()
@@ -135,6 +144,8 @@ def get_results():  # put application's code here
     cur.connection.close()
     return json.dumps(result_list)
 
+
+#TODO create more routes
 
 if __name__ == '__main__':
     app.run()
