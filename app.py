@@ -75,6 +75,40 @@ def iofh_testcase_results():  # put application's code here
     return json.dumps(result_list)
 
 
+@app.route('/iofh_testcase_options')
+def iofh_testcase_options():  # put application's code here
+    cur = get_db().cursor()
+    run_id = request.args.get('run_id')
+    query = cur.execute("SELECT iopt.IOFHsTestcase_id as testcase_id, iopt.id  as opt_id, iopt.api, iopt.apiVersion, iopt.testFileName , iopt.access , "
+                        "iopt.\"type\" , iopt.segments , iopt.orderingInaFile, iopt.orderingInterFile, iopt.taskOffset , "
+                        "iopt.nodes, iopt.tasks , iopt.clientsPerNode , iopt.repetitions , iopt.xfersize , iopt.blocksize , "
+                        "iopt.aggregateFilesize , iopt.stonewallingTime , iopt.stoneWallingWearOut "
+                        "FROM IOFHsOptions iopt INNER JOIN IOFHsTestcases it ON iopt.IOFHsTestcase_id  = it.id where it.IOFHsRun_id == "+run_id+";")
+    colname = [d[0] for d in query.description]
+    result_list = [dict(zip(colname, r)) for r in query.fetchall()]
+    cur.close()
+    cur.connection.close()
+    return json.dumps(result_list)
+
+
+
+# @app.route('/iofh_testcase_results')
+# def iofh_testcase_results():  # put application's code here
+#     cur = get_db().cursor()
+#     run_id = request.args.get('run_id')
+#     query = cur.execute("SELECT ires.IOFHsTestcase_id as testcase_id, ires.id as res_id, iopt.id  as opt_id, ires.access, ires.bwMiB, ires.iops, it.name, it.t_start, it.exe, it.stonewall, it.score, "
+#                         "it.t_delta, it.t_end, ires.latency, ires.blockKiB, ires.xferKiB, ires.openTime, ires.wrRdTime, ires.closeTime, ires.totalTime, ires.iter, "
+#                         "iopt.api, iopt.apiVersion, iopt.testFileName , iopt.access , iopt.\"type\" , iopt.segments , iopt.orderingInaFile, iopt.orderingInterFile, iopt.taskOffset,"
+#                         "iopt.nodes, iopt.tasks , iopt.clientsPerNode , iopt.repetitions , iopt.xfersize , iopt.blocksize , iopt.aggregateFilesize , iopt.stonewallingTime , "
+#                         "iopt.stoneWallingWearOut FROM IOFHsResults ires INNER JOIN IOFHsOptions iopt  ON ires.IOFHsTestcase_id  = iopt.IOFHsTestcase_id INNER JOIN IOFHsTestcases it "
+#                         "ON it.id  = iopt.IOFHsTestcase_id where it.IOFHsRun_id =="+run_id+";")
+#     colname = [d[0] for d in query.description]
+#     result_list = [dict(zip(colname, r)) for r in query.fetchall()]
+#     cur.close()
+#     cur.connection.close()
+#     return json.dumps(result_list)
+
+
 @app.route('/performances')
 def get_performances():  # put application's code here
     cur = get_db().cursor()
