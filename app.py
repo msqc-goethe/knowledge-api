@@ -6,8 +6,8 @@ from flask import request
 
 app = Flask(__name__)
 
-DATABASE = "../pythonProject1/pythonsqlite.db"
-
+#DATABASE = "../pythonProject1/pythonsqlite.db"
+DATABASE = "C:\Studium\HIWI\IORExtractor\pythonsqlite.db"
 
 def get_db():
     db = getattr(g, '_database', None)
