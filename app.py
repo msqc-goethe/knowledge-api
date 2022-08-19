@@ -118,6 +118,30 @@ def get_darshan():  # put application's code here
     return json.dumps(result_list)
 
 
+@app.route('/cnt')
+def get_cnt():  # put application's code here
+    result_lists=[]
+    cur = get_db().cursor()
+    query = cur.execute("SELECT COUNT(*) as darshan_cnt FROM DarshanSummaries")
+    colname = [d[0] for d in query.description]
+    result_lists.append([dict(zip(colname, r)) for r in query.fetchall()])
+    query = cur.execute("SELECT COUNT(*) as io500_cnt FROM IOFHs;")
+    colname = [d[0] for d in query.description]
+    result_lists.append([dict(zip(colname, r)) for r in query.fetchall()])
+    query = cur.execute("SELECT COUNT(*) as ior_cnt FROM performances;")
+    colname = [d[0] for d in query.description]
+    result_lists.append([dict(zip(colname, r)) for r in query.fetchall()])
+    query = cur.execute("SELECT COUNT(*) as haccio_cnt FROM Custom WHERE name_app = 'Haccio';")
+    colname = [d[0] for d in query.description]
+    result_lists.append([dict(zip(colname, r)) for r in query.fetchall()])
+    query = cur.execute("SELECT COUNT(*) as custom_cnt FROM Custom;")
+    colname = [d[0] for d in query.description]
+    result_lists.append([dict(zip(colname, r)) for r in query.fetchall()])
+    cur.close()
+    cur.connection.close()
+    return json.dumps(result_lists)
+
+
 @app.route('/custom')
 def get_custom():  # put application's code here
     cur = get_db().cursor()
