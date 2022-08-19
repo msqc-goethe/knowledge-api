@@ -118,6 +118,17 @@ def get_darshan():  # put application's code here
     return json.dumps(result_list)
 
 
+@app.route('/custom')
+def get_custom():  # put application's code here
+    cur = get_db().cursor()
+    query = cur.execute("SELECT * FROM Custom")
+    colname = [d[0] for d in query.description]
+    result_list = [ dict(zip(colname, r)) for r in query.fetchall() ]
+    cur.close()
+    cur.connection.close()
+    return json.dumps(result_list)
+
+
 
 @app.route('/performances')
 def get_performances():  # put application's code here
